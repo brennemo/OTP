@@ -10,7 +10,6 @@
 
 int main(int argc, char *argv[]) {
 	int i, numChars;
-	char randomKey[numChars];
 	char alphabet[27] = {
 					'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
 					'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
@@ -19,14 +18,16 @@ int main(int argc, char *argv[]) {
 
 	srand(time(NULL));
 
-	numChars = atoi(argv[1]);
+	numChars = atoi(argv[1]) + 1;
+	char randomKey[numChars];
 
-	//print all args 
-	for (i = 0; i < argc; i++) {
-		printf("%s ", argv[i]);
+	for (i = 0; i < numChars - 1; i++) {
+		randomKey[i] = alphabet[rand() % 27]; 
 	}
-	printf("\n");
+	randomKey[numChars - 1] = '\n';
 
-	//1st arg 
-	printf("%s\n", argv[1]);
+	for (i = 0; i < numChars; i++) {
+		printf("%c", randomKey[i]);
+	}
+
 }
