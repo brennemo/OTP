@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 	fgets(buffer, sizeof(buffer) - 1, stdin); // Get input from the user, trunc to buffer - 1 chars, leaving \0
 	buffer[strcspn(buffer, "\n")] = '\0'; // Remove the trailing \n that fgets adds
 
+
 	// Send message to server
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");

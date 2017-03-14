@@ -15,7 +15,8 @@ void error(const char *msg) { perror(msg); exit(1); } // Error function used for
 
 int main(int argc, char *argv[])
 {
-	int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
+	int i;
+	/*int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
 	socklen_t sizeOfClientInfo;
 	char buffer[256];
 	struct sockaddr_in serverAddress, clientAddress;
@@ -46,13 +47,14 @@ int main(int argc, char *argv[])
 	//Use a separate process to handle the rest of the transaction 
 	pid_t childPid = -5;	int childExitMethod;
 
+	//make sure child is communicating with otp_enc
 	childPid = fork();
 	if (childPid == -1) {
 		perror("Hull Breach\n");
 		exit(1);
 	}
 	else if (childPid == 0) {
-			memset(buffer, '\0', 256);
+		memset(buffer, '\0', 256);
 		charsRead = recv(establishedConnectionFD, buffer, 255, 0); // Read the client's message from the socket
 		if (charsRead < 0) error("ERROR reading from socket");
 		printf("SERVER: I received this from the client: \"%s\"\n", buffer);
@@ -66,6 +68,41 @@ int main(int argc, char *argv[])
 	}
 
 	waitpid(childPid, &childExitMethod, 0);
+	*/
+
+	// Encrypt Message
+	char *testMessage = "HELLO", *testKey = "XMCKL"; 
+	char encryptedMessage[7];
+	char temp, key, encrypt;
+	memset(encryptedMessage, '\0', 7);
+
+	//convert ASCII values to 0...26 for A...' '
+	for (i = 0; i < strlen(testMessage); i++) {
+		if (testMessage[i] == ' ') 
+			temp = 26; 
+		else 
+			temp = testMessage[i] - 65;
+		if (testKey[i] == ' ')
+			key = 26;
+		else 
+			key = testKey[i] - 65; 
+
+		encrypt = (temp + key) % 26;
+		encryptedMessage[i] = encrypt;
+	}
+
+	//convert encrypted string back to ASCII values 
+	for (i = 0; i < strlen(encryptedMessage); i++) {
+		if (encryptedMessage[i] == 26) {
+			encryptedMessage[i] = ' ';
+		}	
+		else {
+			encryptedMessage[i] += 65; 
+		}
+	}
+
+	//test print 
+	printf("%s\n", encryptedMessage);
 
 	// Get the message from the client and display it
 	/*
