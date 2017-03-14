@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 		else 
 			key = testKey[i] - 65; 
 
-		encrypt = (temp + key) % 26;
+		encrypt = (temp + key) % 27;
 		encryptedMessage[i] = encrypt;
 	}
 
