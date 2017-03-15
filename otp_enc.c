@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
 	printf("Newline in keyText (length %d) at %d\n", newline, keyLen);
 	
 	
-	plainText[plnLen] = '\0';							//append '\0' to each 
-	keyText[keyLen] = '\0';		
+	plainText[plnLen-1] = '\0';							//append '\0' to each 
+	keyText[keyLen-1] = '\0';		
 
 	newline = strcspn(plainText, delim);
 	printf("Newline in plainText (length %d) at %d\n", newline, plnLen);
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	/*
+	
 	printf("KEY:\n");
 	for (i = 0;i < keyLen; i++) {
 		printf("%d	%c	%d\n", i, keyText[i], keyText[i]);
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 	for (i = 0;i < keyLen; i++) {
 		printf("%d	%c	%d\n", i, plainText[i], plainText[i]);
 	}
-	*/
+	
 
 	//test print 
 	//printf("plain text: %s\n key: %s\n", plainText, keyText);
