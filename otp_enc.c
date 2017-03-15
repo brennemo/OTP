@@ -64,9 +64,19 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 	}
+	
+	printf("KEY:\n");
+	for (i = 0;i < keyLen; i++) {
+		printf("%c	%d\n", keyText[i], keyText[i]);
+	}
+
+	printf("TEXT:\n");
+	for (i = 0;i < keyLen; i++) {
+		printf("%c	%d\n", plainText[i], plainText[i]);
+	}
 
 	//test print 
-	printf("plain text: %s\n key: %s\n", plainText, keyText);
+	//printf("plain text: %s\n key: %s\n", plainText, keyText);
 	
 	//Combine key and plain text into one string to send 
 	memset(buffer, '\0', sizeof(buffer));
