@@ -52,24 +52,17 @@ int main(int argc, char *argv[])
 	char delim[] = "\n";
 	int newline = -1; 
 	newline = strcspn(plainText, delim);
-	printf("Newline in plainText (length %d) at %d\n", newline, plnLen);
-	//if (newline > 0) plainText[newline] = '\0';	
+	//printf("Newline in plainText (length %d) at %d\n", newline, plnLen);	
 	
 	//newline = -1;
 	newline = strcspn(keyText, delim);
-	printf("Newline in keyText (length %d) at %d\n", newline, keyLen);
-	//if (newline > 0) keyText[newline] = '\0';	
+	//printf("Newline in keyText (length %d) at %d\n", newline, keyLen);
 	
-	plainText[strlen(plainText) - 2] = '\0';							//append '\0' to each 
+	plainText[strlen(plainText) - 2] = '\0';	//append '\0' to each, overwriting '\n'	
 	keyText[strlen(keyText) - 1] = '\0';		
 
-	newline = strcspn(plainText, delim);
-	printf("Newline in plainText (length %d) at %d\n", newline, plnLen);
-	
-	newline = strcspn(keyText, delim);
-	printf("Newline in keyText (length %d) at %d\n", newline, keyLen);	
-
 	//Validate characters in plain text and key, minus null terminator
+	
 	for (i = 0; i < plnLen - 1; i++) {
 		if (plainText[i] < 65 && plainText[i] > 90 && plainText[i] != 32) {		
 			fprintf(stderr, "input contains bad characters\n");
@@ -84,7 +77,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	
+	/*
 	printf("KEY:\n");
 	for (i = 0;i < keyLen; i++) {
 		printf("%d	%c	%d\n", i, keyText[i], keyText[i]);
@@ -94,20 +87,20 @@ int main(int argc, char *argv[])
 	for (i = 0;i < plnLen; i++) {
 		printf("%d	%c	%d\n", i, plainText[i], plainText[i]);
 	}
-	
+	*/
 
 	//test print 
 	//printf("plain text: %s\n key: %s\n", plainText, keyText);
 	
 	//Combine key and plain text into one string to send 
+	//Method from Professor Brewster's example on Piazza 
 	memset(buffer, '\0', sizeof(buffer));
 	strcat(buffer, keyText);
 	strcat(buffer, "##");
 	strcat(buffer, plainText);
 	strcat(buffer, "@@");
 	
-	printf("combined strings: %s\n", buffer);
-	
+	//printf("combined strings: %s\n", buffer);
 
 	// Set up the server address struct
 	memset((char*)&serverAddress, '\0', sizeof(serverAddress)); // Clear out the address struct
@@ -124,7 +117,8 @@ int main(int argc, char *argv[])
 	
 	// Connect to server
 	if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) // Connect socket to address
-		error("CLIENT: ERROR connecting");
+		//error("CLIENT: ERROR connecting");
+		fprintf(stderr, "Error: could not contact otp_enc_d on port %d\n", portNumber);
 
 	// Get input message from user
 	/*
@@ -137,7 +131,7 @@ int main(int argc, char *argv[])
 
 	// Send message to server
 	
-	charsWritten = send(socketFD, plainText, strlen(plainText), 0); // Write to the server
+	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
 	if (charsWritten < strlen(buffer)) printf("CLIENT: WARNING: Not all data written to socket!\n");
 	
