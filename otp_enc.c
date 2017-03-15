@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
-	char buffer[2048];
+	char buffer[100000];
 	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
@@ -67,6 +67,16 @@ int main(int argc, char *argv[])
 
 	//test print 
 	printf("plain text: %s\n key: %s\n", plainText, keyText);
+	
+	//Combine key and plain text into one string to send 
+	memset(buffer, '\0', sizeof(buffer));
+	strcat(buffer, keyText);
+	strcat(buffer, "##");
+	strcat(buffer, plainText);
+	strcat(buffer, "@@");
+	
+	printf("combined strings: %s\n", buffer);
+	
 
 	// Set up the server address struct
 	memset((char*)&serverAddress, '\0', sizeof(serverAddress)); // Clear out the address struct

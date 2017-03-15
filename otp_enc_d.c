@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	int i;
 	int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
 	socklen_t sizeOfClientInfo;
-	char buffer[2048];
+	char buffer[100000];
 	struct sockaddr_in serverAddress, clientAddress;
 	char temp, key, encrypt;
 
@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 		else if (childPid == 0) {
-			memset(buffer, '\0', 2048);
-			charsRead = recv(establishedConnectionFD, buffer, 2047, 0); // Read the client's message from the socket
+			memset(buffer, '\0', 100000);
+			charsRead = recv(establishedConnectionFD, buffer, 99999, 0); // Read the client's message from the socket
 			if (charsRead < 0) error("ERROR reading from socket");
 			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
 
