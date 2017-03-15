@@ -47,8 +47,25 @@ int main(int argc, char *argv[])
 	lseek(keyFile, 0, SEEK_SET);
 	read(plainTextFile, plainText, plnLen);				//read files and store in buffers
 	read(keyFile, keyText, keyLen);
+	
+	//find and remove newlines
+	char delim[] = "\n";
+	int newline = -1; 
+	newline = strcspn(plainText, delim);
+	printf("Newline in plainText (length %d) at %d\n", newline, plnLen);
+	
+	newline = strcspn(keyText, delim);
+	printf("Newline in keyText (length %d) at %d\n", newline, keyLen);
+	
+	
 	plainText[plnLen] = '\0';							//append '\0' to each 
-	keyText[keyLen] = '\0';							
+	keyText[keyLen] = '\0';		
+
+	newline = strcspn(plainText, delim);
+	printf("Newline in plainText (length %d) at %d\n", newline, plnLen);
+	
+	newline = strcspn(keyText, delim);
+	printf("Newline in keyText (length %d) at %d\n", newline, keyLen);	
 
 	//Validate characters in plain text and key, minus null terminator
 	for (i = 0; i < plnLen - 1; i++) {
@@ -65,15 +82,17 @@ int main(int argc, char *argv[])
 		}
 	}
 	
+	/*
 	printf("KEY:\n");
 	for (i = 0;i < keyLen; i++) {
-		printf("%c	%d\n", keyText[i], keyText[i]);
+		printf("%d	%c	%d\n", i, keyText[i], keyText[i]);
 	}
 
 	printf("TEXT:\n");
 	for (i = 0;i < keyLen; i++) {
-		printf("%c	%d\n", plainText[i], plainText[i]);
+		printf("%d	%c	%d\n", i, plainText[i], plainText[i]);
 	}
+	*/
 
 	//test print 
 	//printf("plain text: %s\n key: %s\n", plainText, keyText);
