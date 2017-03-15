@@ -27,13 +27,13 @@ int main(int argc, char *argv[])
 
 	//Open plain text and key files 
 	plainTextFile = open(argv[1], "r");
-	keyFile = open(argv[1], "r");
-	if ((plainTextFile < 0) || (keyFile < 0)) { perror("Cannot open file\n"); exit(1); };
+	keyFile = open(argv[2], "r");
+	if ((plainTextFile < 0) || (keyFile < 0)) { fprintf(stderr, "Cannot open file\n"); exit(1); };
 
 	//Get lengths of text in files and compare 
 	plnLen = lseek(plainTextFile, 0, SEEK_END);
 	keyLen = lseek(keyFile, 0, SEEK_END);
-	if (keyLen < plnLen) { perror( "key is too short\n"; exit(1); ) };
+	if (keyLen < plnLen) { fprintf(stderr, "key \'%s\' is too short\n", argv[2]); exit(1); };
 
 	// Set up the server address struct
 	memset((char*)&serverAddress, '\0', sizeof(serverAddress)); // Clear out the address struct
