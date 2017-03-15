@@ -47,7 +47,14 @@ int main(int argc, char *argv[])
 	plainText[plnLen] = '\0';							//append '\0' to each 
 	keyText[keyLen] = '\0';
 
-	//Validate characters 
+	//Validate characters in plain text, minus null terminators 
+	for (i = 0; i < plnLen - 1; i++) {
+		if (plainText[i] < 65 || plainText[i] > 90 || plainText[i] != 32) {		
+			fprintf(stderr, "input contains bad characters\n");
+			exit(1);
+		}
+	}
+
 
 	// Set up the server address struct
 	memset((char*)&serverAddress, '\0', sizeof(serverAddress)); // Clear out the address struct
