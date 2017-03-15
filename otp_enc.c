@@ -16,12 +16,14 @@ void error(const char *msg) { perror(msg); exit(0); } // Error function used for
 
 int main(int argc, char *argv[])
 {
+	int i;
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
 	char buffer[256];
-	FILE* plainTextFile, keyFile;
+	FILE *plainTextFile, *keyFile;
 	int plnLen, keyLen; 
+	char *plainText, *keyText; 
     
 	if (argc < 4) { fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); exit(0); } // Check usage & args
 
@@ -30,10 +32,22 @@ int main(int argc, char *argv[])
 	keyFile = open(argv[2], "r");
 	if ((plainTextFile < 0) || (keyFile < 0)) { fprintf(stderr, "Cannot open file\n"); exit(1); };
 
-	//Get lengths of text in files and compare 
+	//Get lengths of text in files and compare to ensure key >= plain text  
 	plnLen = lseek(plainTextFile, 0, SEEK_END);
 	keyLen = lseek(keyFile, 0, SEEK_END);
 	if (keyLen < plnLen) { fprintf(stderr, "key \'%s\' is too short\n", argv[2]); exit(1); };
+
+	//Store text from files in buffers, 
+	plainText = malloc((plnLen + 1) * sizeof(char));	//allocate space for buffers (+1 for '\0')
+	keyText = malloc((keyLen + 1) * sizeof(char));
+	lseek(plainTextFile, 0, SEEK_SET);					//return to beginning of each file 
+	lseek(keyText, 0, SEEK_SET);
+	read(plainTextFile, plainText, plnLen);				//read files and store in buffers
+	read(keyFile, keyText, keyLen);
+	plainText[plnLen] = '\0';							//append '\0' to each 
+	keyText[keyLen] = '\0';
+
+	//Validate characters 
 
 	// Set up the server address struct
 	memset((char*)&serverAddress, '\0', sizeof(serverAddress)); // Clear out the address struct
