@@ -22,15 +22,15 @@ int main(int argc, char *argv[])
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
 	char buffer[2048];
-	FILE *plainTextFile, *keyFile;
+	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
     
 	if (argc < 4) { fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); exit(0); } // Check usage & args
 
 	//Open plain text and key files 
-	plainTextFile = open(argv[1], "r");
-	keyFile = open(argv[2], "r");
+	plainTextFile = open(argv[1], O_RDONLY);
+	keyFile = open(argv[2], O_RDONLY);
 	if ((plainTextFile < 0) || (keyFile < 0)) { fprintf(stderr, "Cannot open file\n"); exit(1); };
 
 	//Get lengths of text in files and compare to ensure key >= plain text  
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 	//memset(plainText, '\0', plnLen + 1);				//fill buffers with null terminators 
 	//memset(keyText, '\0', keyLen + 1);
 	lseek(plainTextFile, 0, SEEK_SET);					//return to beginning of each file 
-	lseek(keyText, 0, SEEK_SET);
+	lseek(keyFile, 0, SEEK_SET);
 	read(plainTextFile, plainText, plnLen);				//read files and store in buffers
 	read(keyFile, keyText, keyLen);
 	plainText[plnLen] = '\0';							//append '\0' to each 
@@ -52,14 +52,14 @@ int main(int argc, char *argv[])
 
 	//Validate characters in plain text and key, minus null terminator
 	for (i = 0; i < plnLen - 1; i++) {
-		if (plainText[i] < 65 || plainText[i] > 90 || plainText[i] != 32) {		
+		if (plainText[i] < 65 && plainText[i] > 90 && plainText[i] != 32) {		
 			fprintf(stderr, "input contains bad characters\n");
 			exit(1);
 		}
 	}
 
 	for (i = 0; i < keyLen - 1; i++) {
-		if (keyText[i] < 65 || keyText[i] > 90 || keyText[i] != 32) {		
+		if (keyText[i] < 65 && keyText[i] > 90 && keyText[i] != 32) {		
 			fprintf(stderr, "input contains bad characters\n");
 			exit(1);
 		}
