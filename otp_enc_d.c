@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 	socklen_t sizeOfClientInfo;
 	char buffer[2048];
 	struct sockaddr_in serverAddress, clientAddress;
+	char temp, key, encrypt;
 
 	//Initialize sigaction struct, signal handler, and override default actions
 	struct sigaction SIGCHLD_action = { 0 }; 
@@ -78,7 +79,6 @@ int main(int argc, char *argv[])
 			// Encrypt Message
 			char *testMessage = "HELLO", *testKey = "XMCKL"; 
 			char encryptedMessage[7];
-			char temp, key, encrypt;
 			memset(encryptedMessage, '\0', 7);
 
 			//convert ASCII values to 0...26 for A...' '
@@ -106,21 +106,14 @@ int main(int argc, char *argv[])
 				}
 			}
 
-		}				//if childPid == 0
-		else {			//childPid == parentPid 
+		}					//if childPid == 0
+		else {				//childPid == parentPid 
 			
 			close(establishedConnectionFD); // Close the existing socket which is connected to the client
-			/*do {
-				waitpid(childPid, &childExitMethod, 0);
-
-			} while ();*/
-			
-			//close(listenSocketFD); // Close the listening socket
-			//exit(0);
 		}
 
 		
-	}				//while loop
+	}						//while loop
 
 	close(listenSocketFD); // Close the listening socket
 	return 0; 
