@@ -10,6 +10,8 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <signal.h>
+#include <fcntl.h>
 
 void error(const char *msg) { perror(msg); exit(1); } // Error function used for reporting issues
 
@@ -27,7 +29,7 @@ int main(int argc, char *argv[])
 	//Initialize sigaction struct, signal handler, and override default actions
 	struct sigaction SIGCHLD_action = { 0 }; 
 	SIGCHLD_action.sa_handler = catchSIGCHLD;
-	sigfillset(&SIGCHLD_ACTION.sa_mask);
+	sigfillset(&SIGCHLD_action.sa_mask);
 	SIGCHLD_action.sa_flags = 0; 
 	sigaction(SIGCHLD, &SIGCHLD_action, NULL);
 
@@ -121,5 +123,5 @@ int main(int argc, char *argv[])
 
 
 void catchSIGCHLD(int signo) {
-	while (waitpid(-1; 0; WNOHANG) > 0) {}
+	while (waitpid(-1, 0, WNOHANG) > 0) {}
 }
