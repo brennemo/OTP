@@ -23,6 +23,13 @@ int main(int argc, char *argv[])
 	char buffer[2048];
 	struct sockaddr_in serverAddress, clientAddress;
 
+	//Initialize sigaction struct, signal handler, and override default actions
+	struct sigaction SIGCHLD_action = { 0 }; 
+	SIGCHLD_action.sa_handler = catchSIGCHLD;
+	sigfillset(&SIGCHLD_ACTION.sa_mask);
+	SIGCHLD_action.sa_flags = 0; 
+	sigaction(SIGCHLD, &SIGCHLD_action, NULL);
+
 	if (argc < 2) { fprintf(stderr,"USAGE: %s port\n", argv[0]); exit(1); } // Check usage & args
 
 	// Set up the address struct for this process (the server)
@@ -103,10 +110,10 @@ int main(int argc, char *argv[])
 		else {			//childPid == parentPid 
 			
 			close(establishedConnectionFD); // Close the existing socket which is connected to the client
-			do {
+			/*do {
 				waitpid(childPid, &childExitMethod, 0);
 
-			} while (/*sig child handler here*/);
+			} while ();*/
 			
 			//close(listenSocketFD); // Close the listening socket
 			//exit(0);
@@ -121,5 +128,5 @@ int main(int argc, char *argv[])
 
 
 void catchSIGCHLD(int signo) {
-	
+	while (waitpid(-1; 0; WNOHANG) > 0) {}
 }
