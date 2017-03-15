@@ -117,20 +117,11 @@ int main(int argc, char *argv[])
 	
 	// Connect to server
 	if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0) // Connect socket to address
-		//error("CLIENT: ERROR connecting");
 		fprintf(stderr, "Error: could not contact otp_enc_d on port %d\n", portNumber);
 
-	// Get input message from user
-	/*
-	printf("CLIENT: Enter text to send to the server, and then hit enter: ");
-	memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer array
-	fgets(buffer, sizeof(buffer) - 1, stdin); // Get input from the user, trunc to buffer - 1 chars, leaving \0
-	buffer[strcspn(buffer, "\n")] = '\0'; // Remove the trailing \n that fgets adds
-	*/
 
 
 	// Send message to server
-	
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
 	if (charsWritten < strlen(buffer)) printf("CLIENT: WARNING: Not all data written to socket!\n");

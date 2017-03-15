@@ -73,10 +73,16 @@ int main(int argc, char *argv[])
 			charsRead = recv(establishedConnectionFD, buffer, 99999, 0); // Read the client's message from the socket
 			if (charsRead < 0) error("ERROR reading from socket");
 			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
+			
+			printf("BUFFER IN SERVER: %s\n", buffer);
+			printf("Buffer size: %d\n", strlen(buffer));
+			//Split key and plain text 
+			char keyEnd[] = "#";
+			int plainZero; 							//1st index of plain text 
+			plainZero = strcspn(buffer, keyEnd);
+			plainZero += 2; 
 
-			// Send a Success message back to the client
-			charsRead = send(establishedConnectionFD, "I am the server, and I got your message", 39, 0); // Send success back
-			if (charsRead < 0) error("ERROR writing to socket");
+			printf("1st char of plain text: \'%c\'\n", buffer[plainZero]);
 
 			// Encrypt Message
 			char *testMessage = "HELLO", *testKey = "XMCKL"; 
@@ -107,6 +113,11 @@ int main(int argc, char *argv[])
 					encryptedMessage[i] += 65; 
 				}
 			}
+
+			// Send a Success message back to the client
+			charsRead = send(establishedConnectionFD, "I am the server, and I got your message", 39, 0); // Send success back
+			if (charsRead < 0) error("ERROR writing to socket");
+		
 
 		}					//if childPid == 0
 		else {				//childPid == parentPid 
