@@ -90,11 +90,21 @@ int main(int argc, char *argv[])
 			char *keyText = malloc((plainZero - 1) * sizeof(char));
 			char *plainText = malloc((strlen(buffer) - plainZero) * sizeof(char));
 			
+			//copy key into separate string
 			strncpy(keyText, buffer, plainZero - 2);
 			printf("%s\n", keyText);
 			
+			//copy plain text into separate string 
+			int j = 0;
+			for (i = plainZero; i < strlen(buffer) - 2; i++) {
+					plainText[j] = buffer[i];
+					j++;
+			}
+			
+			printf("plain text: %s\n", plainText);
 			printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
+			/*
 			// Encrypt Message
 			char *testMessage = "HELLO", *testKey = "XMCKL"; 
 			char encryptedMessage[7];
@@ -124,6 +134,7 @@ int main(int argc, char *argv[])
 					encryptedMessage[i] += 65; 
 				}
 			}
+			*/
 
 			// Send a Success message back to the client
 			charsRead = send(establishedConnectionFD, "I am the server, and I got your message", 39, 0); // Send success back
