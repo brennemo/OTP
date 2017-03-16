@@ -77,12 +77,23 @@ int main(int argc, char *argv[])
 			printf("BUFFER IN SERVER: %s\n", buffer);
 			printf("Buffer size: %d\n", strlen(buffer));
 			//Split key and plain text 
-			char keyEnd[] = "#";
-			int plainZero; 							//1st index of plain text 
+			char keyEnd[] = "#"; //strEnd[] = "@";
+			int plainZero, endOfString; 				//1st index of plain text 
 			plainZero = strcspn(buffer, keyEnd);
 			plainZero += 2; 
+			
+			//endOfString = strcspn(buffer, strEnd);
+			//printf("end of string: %s\n", buffer[endOfString]);
 
-			printf("1st char of plain text: \'%c\'\n", buffer[plainZero]);
+			//printf("1st char of plain text: \'%c\'\n", buffer[plainZero]);
+			//plainText = malloc((plnLen + 1) * sizeof(char));	//allocate space for buffers (+1 for '\0')
+			char *keyText = malloc((plainZero - 1) * sizeof(char));
+			char *plainText = malloc((strlen(buffer) - plainZero) * sizeof(char));
+			
+			strncpy(keyText, buffer, plainZero - 2);
+			printf("%s\n", keyText);
+			
+			printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
 			// Encrypt Message
 			char *testMessage = "HELLO", *testKey = "XMCKL"; 
@@ -117,7 +128,9 @@ int main(int argc, char *argv[])
 			// Send a Success message back to the client
 			charsRead = send(establishedConnectionFD, "I am the server, and I got your message", 39, 0); // Send success back
 			if (charsRead < 0) error("ERROR writing to socket");
-		
+			
+			free(keyText);
+			free(plainText);
 
 		}					//if childPid == 0
 		else {				//childPid == parentPid 
