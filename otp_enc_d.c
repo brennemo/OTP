@@ -74,8 +74,8 @@ int main(int argc, char *argv[])
 			if (charsRead < 0) error("ERROR reading from socket");
 			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
 			
-			printf("BUFFER IN SERVER: %s\n", buffer);
-			printf("Buffer size: %d\n", strlen(buffer));
+			//printf("BUFFER IN SERVER: %s\n", buffer);
+			//printf("Buffer size: %d\n", strlen(buffer));
 			//Split key and plain text 
 			char keyEnd[] = "#"; //strEnd[] = "@";
 			int plainZero, endOfString; 				//1st index of plain text 
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 			
 			//copy key into separate string
 			strncpy(keyText, buffer, plainZero - 2);
-			printf("%s\n", keyText);
+			//printf("%s\n", keyText);
 			
 			//copy plain text into separate string 
 			int j = 0;
@@ -101,25 +101,25 @@ int main(int argc, char *argv[])
 					j++;
 			}
 			
-			printf("plain text: %s\n", plainText);
-			printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
+			//printf("plain text: %s\n", plainText);
+			//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
-			/*
+			
 			// Encrypt Message
-			char *testMessage = "HELLO", *testKey = "XMCKL"; 
-			char encryptedMessage[7];
-			memset(encryptedMessage, '\0', 7);
+			//char *testMessage = "HELLO", *testKey = "XMCKL"; 
+			char *encryptedMessage = malloc(strlen(plainText) * sizeof(char));
+			memset(encryptedMessage, '\0', strlen(encryptedMessage));
 
 			//convert ASCII values to 0...26 for A...' '
-			for (i = 0; i < strlen(testMessage); i++) {
-				if (testMessage[i] == ' ') 
+			for (i = 0; i < strlen(plainText); i++) {
+				if (plainText[i] == ' ') 
 					temp = 26; 
 				else 
-					temp = testMessage[i] - 65;
-				if (testKey[i] == ' ')
+					temp = plainText[i] - 65;
+				if (keyText[i] == ' ')
 					key = 26;
 				else 
-					key = testKey[i] - 65; 
+					key = keyText[i] - 65; 
 
 				encrypt = (temp + key) % 27;
 				encryptedMessage[i] = encrypt;
@@ -134,7 +134,9 @@ int main(int argc, char *argv[])
 					encryptedMessage[i] += 65; 
 				}
 			}
-			*/
+			
+			printf("Encrypted message: %s\n", encryptedMessage);
+			
 
 			// Send a Success message back to the client
 			charsRead = send(establishedConnectionFD, "I am the server, and I got your message", 39, 0); // Send success back
