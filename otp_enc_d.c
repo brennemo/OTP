@@ -137,6 +137,38 @@ int main(int argc, char *argv[])
 			
 			printf("Encrypted message: %s\n", encryptedMessage);
 			
+			//Test decryption 
+			char *decryptedMessage = malloc(strlen(encryptedMessage) * sizeof(char));
+			memset(decryptedMessage, '\0', strlen(decryptedMessage));
+			char decrypt; 
+			
+			//convert ASCII values to 0...26 for A...' '
+			
+			for (i = 0; i < strlen(encryptedMessage); i++) {
+				if (encryptedMessage[i] == ' ') 
+					temp = 26; 
+				else 
+					temp = encryptedMessage[i] - 65;
+				if (keyText[i] == ' ')
+					key = 26;
+				else 
+					key = keyText[i] - 65; 
+
+				decrypt = (temp - key + 27) % 27;
+				decryptedMessage[i] = decrypt;
+			}
+
+			//convert decrypted string back to ASCII values 
+			for (i = 0; i < strlen(decryptedMessage); i++) {
+				if (decryptedMessage[i] == 26) {
+					decryptedMessage[i] = ' ';
+				}	
+				else {
+					decryptedMessage[i] += 65; 
+				}
+			}
+
+			printf("Decrypted message: %s\n", decryptedMessage);
 
 			// Send a Success message back to the client
 			charsRead = send(establishedConnectionFD, "I am the server, and I got your message", 39, 0); // Send success back
