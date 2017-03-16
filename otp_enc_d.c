@@ -169,6 +169,9 @@ int main(int argc, char *argv[])
 			}
 
 			printf("Decrypted message: %s\n", decryptedMessage);
+			for (i = 0; i < strlen(decryptedMessage); i++) {
+					printf("%d	%c\n", decryptedMessage[i], decryptedMessage[i]);
+			}
 
 			// Send a Success message back to the client
 			charsRead = send(establishedConnectionFD, "I am the server, and I got your message", 39, 0); // Send success back
@@ -185,7 +188,10 @@ int main(int argc, char *argv[])
 
 		
 	}						//while loop
-
+	//free(plainText);
+	//free(keyText);
+	//free(encryptedMessage);
+	//free(decryptedMessage);
 	close(listenSocketFD); // Close the listening socket
 	return 0; 
 }
