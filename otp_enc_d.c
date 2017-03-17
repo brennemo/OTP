@@ -13,6 +13,8 @@
 #include <signal.h>
 #include <fcntl.h>
 
+#define BUFFER_SIZE 100000
+
 void error(const char *msg) { perror(msg); exit(1); } // Error function used for reporting issues
 
 void catchSIGCHLD(int signo);				//catch SIGCHLD to manage child processes 
@@ -22,7 +24,7 @@ int main(int argc, char *argv[])
 	int i;
 	int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
 	socklen_t sizeOfClientInfo;
-	char buffer[100000];
+	char buffer[BUFFER_SIZE];
 	struct sockaddr_in serverAddress, clientAddress;
 	char temp, key, encrypt;
 	
@@ -31,8 +33,8 @@ int main(int argc, char *argv[])
 	char typeEnd[] = "%";
 	int plainZero, endOfString; 				//1st index of plain text 
 	
-	char keyText[100000];
-	char plainText[100000];
+	char keyText[BUFFER_SIZE];
+	char plainText[BUFFER_SIZE];
 
 	//Initialize sigaction struct, signal handler, and override default actions
 	struct sigaction SIGCHLD_action = { 0 }; 
@@ -78,8 +80,8 @@ int main(int argc, char *argv[])
 		}
 		else if (childPid == 0) {
 			
-			memset(buffer, '\0', 100000);
-			charsRead = recv(establishedConnectionFD, buffer, 99999, 0); // Read the client's message from the socket
+			memset(buffer, '\0', BUFFER_SIZE);
+			charsRead = recv(establishedConnectionFD, buffer, BUFFER_SIZE - 1, 0); // Read the client's message from the socket
 			if (charsRead < 0) error("ERROR reading from socket");
 			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
 			
@@ -112,7 +114,6 @@ int main(int argc, char *argv[])
 
 			
 			// Encrypt Message
-			//char *testMessage = "HELLO", *testKey = "XMCKL"; 
 			char *encryptedMessage = malloc(strlen(plainText) * sizeof(char));
 			memset(encryptedMessage, '\0', strlen(encryptedMessage));
 
@@ -148,9 +149,7 @@ int main(int argc, char *argv[])
 			// Send a Success message back to the client
 			charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
 			if (charsRead < 0) error("ERROR writing to socket");
-			
-			//free(keyText);
-			//free(plainText);
+		
 			
 			//close(listenSocketFD);
 			//exit(0);
@@ -163,10 +162,7 @@ int main(int argc, char *argv[])
 
 		
 	}						//while loop
-	//free(plainText);
-	//free(keyText);
-	//free(encryptedMessage);
-	//free(decryptedMessage);
+
 	close(listenSocketFD); // Close the listening socket
 	return 0; 
 }
