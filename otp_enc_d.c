@@ -113,8 +113,8 @@ int main(int argc, char *argv[])
 						j++;
 				}
 				
-				printf("plain text: %s\n", plainText);
-				printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
+				//printf("plain text: %s\n", plainText);
+				//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
 				
 				// Encrypt Message
