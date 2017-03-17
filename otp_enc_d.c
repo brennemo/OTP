@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 	
 	char keyText[BUFFER_SIZE];
 	char plainText[BUFFER_SIZE];
+	char encryptedMessage[BUFFER_SIZE];
 
 	//Initialize sigaction struct, signal handler, and override default actions
 	struct sigaction SIGCHLD_action = { 0 }; 
@@ -117,7 +118,7 @@ int main(int argc, char *argv[])
 
 				
 				// Encrypt Message
-				char *encryptedMessage = malloc(strlen(plainText) * sizeof(char));
+				//char *encryptedMessage = malloc(strlen(plainText) * sizeof(char));
 				memset(encryptedMessage, '\0', strlen(encryptedMessage));
 
 				//convert ASCII values to 0...26 for A...' '

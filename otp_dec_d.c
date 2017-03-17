@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 	
 	char keyText[BUFFER_SIZE];
 	char plainText[BUFFER_SIZE];
+	char decryptedMessage[BUFFER_SIZE];
 
 	//Initialize sigaction struct, signal handler, and override default actions
 	struct sigaction SIGCHLD_action = { 0 }; 
@@ -117,7 +118,7 @@ int main(int argc, char *argv[])
 
 					
 				//Decrypt message
-				char *decryptedMessage = malloc(strlen(plainText) * sizeof(char));
+				//char *decryptedMessage = malloc(strlen(plainText) * sizeof(char));
 				memset(decryptedMessage, '\0', strlen(decryptedMessage));
 				char decrypt; 
 				
