@@ -123,7 +123,6 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Error: could not contact otp_enc_d on port %d\n", portNumber);
 
 
-
 	// Send message to server
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");

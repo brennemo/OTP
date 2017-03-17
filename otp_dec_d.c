@@ -117,17 +117,17 @@ int main(int argc, char *argv[])
 
 					
 				//Decrypt message
-				char *decryptedMessage = malloc(strlen(encryptedMessage) * sizeof(char));
+				char *decryptedMessage = malloc(strlen(plainText) * sizeof(char));
 				memset(decryptedMessage, '\0', strlen(decryptedMessage));
 				char decrypt; 
 				
 				//convert ASCII values to 0...26 for A...' '
 				
-				for (i = 0; i < strlen(encryptedMessage); i++) {
-					if (encryptedMessage[i] == ' ') 
+				for (i = 0; i < strlen(plainText); i++) {
+					if (plainText[i] == ' ') 
 						temp = 26; 
 					else 
-						temp = encryptedMessage[i] - 65;
+						temp = plainText[i] - 65;
 					if (keyText[i] == ' ')
 						key = 26;
 					else 
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 
 
 				// Send a Success message back to the client
-				charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
+				charsRead = send(establishedConnectionFD, decryptedMessage, sizeof(decryptedMessage), 0); // Send success back
 				if (charsRead < 0) error("ERROR writing to socket");
 			}				//messageType == ENC 
 		
