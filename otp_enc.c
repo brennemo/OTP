@@ -13,6 +13,8 @@
 #include <netdb.h> 
 #include <fcntl.h>
 
+#define BUFFER_SIZE 100000
+
 void error(const char *msg) { perror(msg); exit(0); } // Error function used for reporting issues
 
 int main(int argc, char *argv[])
@@ -21,7 +23,7 @@ int main(int argc, char *argv[])
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
-	char buffer[100000];
+	char buffer[BUFFER_SIZE];
 	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
@@ -95,7 +97,7 @@ int main(int argc, char *argv[])
 	//Combine key and plain text into one string to send 
 	//Method from Professor Brewster's example on Piazza 
 	memset(buffer, '\0', sizeof(buffer));
-	//strcat(buffer, "ENC%%");					//signal to daemon that this is encoding 
+	strcat(buffer, "ENC%%");					//signal to daemon that this is encoding 
 	strcat(buffer, keyText);
 	strcat(buffer, "##");
 	strcat(buffer, plainText);

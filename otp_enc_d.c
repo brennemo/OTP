@@ -87,10 +87,13 @@ int main(int argc, char *argv[])
 			
 			//printf("BUFFER IN SERVER: %s\n", buffer);
 			//printf("Buffer size: %d\n", strlen(buffer));
+			
+			//Get encode/decode indicator from beginning of string
+			
+			
 			//Split key and plain text 
-
 			plainZero = strcspn(buffer, keyEnd);
-			plainZero += 2; 
+			//plainZero += 2; 
 
 			
 			//endOfString = strcspn(buffer, strEnd);
@@ -99,17 +102,24 @@ int main(int argc, char *argv[])
 
 			
 			//copy key into separate string
-			strncpy(keyText, buffer, plainZero - 2);
+			//strncpy(keyText, buffer, plainZero - 2);
+			//memcpy(keyText, &buffer[5], plainZero - 5);
 			//printf("%s\n", keyText);
+			int j = 0;
+			for (i = 5; i < plainZero; i++) {
+				keyText[j] = buffer[i];
+				j++;
+			}
 			
 			//copy plain text into separate string 
-			int j = 0;
-			for (i = plainZero; i < strlen(buffer) - 2; i++) {
+			//memcpy(plainText, &buffer[plainZero + 2], strlen(buffer) - 4);
+			j = 0;
+			for (i = plainZero + 2; i < strlen(buffer) - 2; i++) {
 					plainText[j] = buffer[i];
 					j++;
 			}
 			
-			//printf("plain text: %s\n", plainText);
+			printf("plain text: %s\n", plainText);
 			//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
 			
