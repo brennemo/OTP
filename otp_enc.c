@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
 	//Combine key and plain text into one string to send 
 	//Method from Professor Brewster's example on Piazza 
 	memset(buffer, '\0', sizeof(buffer));
+	//strcat(buffer, "ENC%%");					//signal to daemon that this is encoding 
 	strcat(buffer, keyText);
 	strcat(buffer, "##");
 	strcat(buffer, plainText);
