@@ -65,31 +65,19 @@ int main(int argc, char *argv[])
 
 	//Validate characters in plain text and key, minus null terminator
 	
-	for (i = 0; i < plnLen - 1; i++) {
-		if (plainText[i] < 65 && plainText[i] > 90 && plainText[i] != 32) {		
+	for (i = 0; i < strlen(plainText) - 1; i++) {
+		if ((plainText[i] < 'A' || plainText[i] > 'Z') && plainText[i] != ' ') {		
 			fprintf(stderr, "input contains bad characters\n");
 			exit(1);
 		}
 	}
 
-	for (i = 0; i < keyLen - 1; i++) {
-		if (keyText[i] < 65 && keyText[i] > 90 && keyText[i] != 32) {		
+	for (i = 0; i < strlen(keyText) - 1; i++) {
 			fprintf(stderr, "input contains bad characters\n");
 			exit(1);
 		}
 	}
-	
-	/*
-	printf("KEY:\n");
-	for (i = 0;i < keyLen; i++) {
-		printf("%d	%c	%d\n", i, keyText[i], keyText[i]);
-	}
 
-	printf("TEXT:\n");
-	for (i = 0;i < plnLen; i++) {
-		printf("%d	%c	%d\n", i, plainText[i], plainText[i]);
-	}
-	*/
 
 	//test print 
 	//printf("plain text: %s\n key: %s\n", plainText, keyText);

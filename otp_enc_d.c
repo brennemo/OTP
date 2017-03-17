@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 			strncpy(messageType, buffer, 3);
 			if (strcmp(messageType, "ENC") != 0) {
 				fprintf(stderr, "Rejected.\n");
-				exit(0);
+				exit(1);
 			}
 			 else {
 				//Split key and plain text 
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 				}
 				
 				//printf("plain text: %s\n", plainText);
-				//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
+				printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
 				
 				// Encrypt Message
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 				}
 
 				//convert encrypted string back to ASCII values 
-				for (i = 0; i < strlen(encryptedMessage); i++) {
+				for (i = 0; i < strlen(plainText); i++) {
 					if (encryptedMessage[i] == 26) {
 						encryptedMessage[i] = ' ';
 					}	

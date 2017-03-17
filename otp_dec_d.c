@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 			strncpy(messageType, buffer, 3);
 			if (strcmp(messageType, "DEC") != 0) {
 				fprintf(stderr, "Rejected.\n");
-				exit(0);
+				exit(1);
 			}
 			 else {
 				//Split key and plain text 
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 				}
 
 				//convert decrypted string back to ASCII values 
-				for (i = 0; i < strlen(decryptedMessage); i++) {
+				for (i = 0; i < strlen(plainText); i++) {
 					if (decryptedMessage[i] == 26) {
 						decryptedMessage[i] = ' ';
 					}	
