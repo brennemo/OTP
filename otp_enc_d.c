@@ -89,76 +89,70 @@ int main(int argc, char *argv[])
 			//printf("Buffer size: %d\n", strlen(buffer));
 			
 			//Get encode/decode indicator from beginning of string
-			
-			
-			//Split key and plain text 
-			plainZero = strcspn(buffer, keyEnd);
-			//plainZero += 2; 
-
-			
-			//endOfString = strcspn(buffer, strEnd);
-			//printf("end of string: %s\n", buffer[endOfString]);
-			//printf("1st char of plain text: \'%c\'\n", buffer[plainZero]);
-
-			
-			//copy key into separate string
-			//strncpy(keyText, buffer, plainZero - 2);
-			//memcpy(keyText, &buffer[5], plainZero - 5);
-			//printf("%s\n", keyText);
-			int j = 0;
-			for (i = 5; i < plainZero; i++) {
-				keyText[j] = buffer[i];
-				j++;
+			strncpy(messageType, buffer, 3);
+			if (strcmp(messageType, "ENC") != 0) {
+				fprintf(stderr, "Rejected.\n");
+				exit(0);
 			}
-			
-			//copy plain text into separate string 
-			//memcpy(plainText, &buffer[plainZero + 2], strlen(buffer) - 4);
-			j = 0;
-			for (i = plainZero + 2; i < strlen(buffer) - 2; i++) {
-					plainText[j] = buffer[i];
+			 else {
+				//Split key and plain text 
+				plainZero = strcspn(buffer, keyEnd);
+
+				//copy key into separate string
+				int j = 0;
+				for (i = 5; i < plainZero; i++) {
+					keyText[j] = buffer[i];
 					j++;
-			}
-			
-			printf("plain text: %s\n", plainText);
-			//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
-
-			
-			// Encrypt Message
-			char *encryptedMessage = malloc(strlen(plainText) * sizeof(char));
-			memset(encryptedMessage, '\0', strlen(encryptedMessage));
-
-			//convert ASCII values to 0...26 for A...' '
-			for (i = 0; i < strlen(plainText); i++) {
-				if (plainText[i] == ' ') 
-					temp = 26; 
-				else 
-					temp = plainText[i] - 65;
-				if (keyText[i] == ' ')
-					key = 26;
-				else 
-					key = keyText[i] - 65; 
-
-				encrypt = (temp + key) % 27;
-				encryptedMessage[i] = encrypt;
-			}
-
-			//convert encrypted string back to ASCII values 
-			for (i = 0; i < strlen(encryptedMessage); i++) {
-				if (encryptedMessage[i] == 26) {
-					encryptedMessage[i] = ' ';
-				}	
-				else {
-					encryptedMessage[i] += 65; 
 				}
-			}
-			
-			printf("Encrypted message: %s\n", encryptedMessage);
-			printf("Key: %s\n", keyText);
+				
+				//copy plain text into separate string 
+				j = 0;
+				for (i = plainZero + 2; i < strlen(buffer) - 2; i++) {
+						plainText[j] = buffer[i];
+						j++;
+				}
+				
+				printf("plain text: %s\n", plainText);
+				//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
+
+				
+				// Encrypt Message
+				char *encryptedMessage = malloc(strlen(plainText) * sizeof(char));
+				memset(encryptedMessage, '\0', strlen(encryptedMessage));
+
+				//convert ASCII values to 0...26 for A...' '
+				for (i = 0; i < strlen(plainText); i++) {
+					if (plainText[i] == ' ') 
+						temp = 26; 
+					else 
+						temp = plainText[i] - 65;
+					if (keyText[i] == ' ')
+						key = 26;
+					else 
+						key = keyText[i] - 65; 
+
+					encrypt = (temp + key) % 27;
+					encryptedMessage[i] = encrypt;
+				}
+
+				//convert encrypted string back to ASCII values 
+				for (i = 0; i < strlen(encryptedMessage); i++) {
+					if (encryptedMessage[i] == 26) {
+						encryptedMessage[i] = ' ';
+					}	
+					else {
+						encryptedMessage[i] += 65; 
+					}
+				}
+				
+				printf("Encrypted message: %s\n", encryptedMessage);
+				printf("Key: %s\n", keyText);
 
 
-			// Send a Success message back to the client
-			charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
-			if (charsRead < 0) error("ERROR writing to socket");
+				// Send a Success message back to the client
+				charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
+				if (charsRead < 0) error("ERROR writing to socket");
+			}				//messageType == ENC 
 		
 			
 			//close(listenSocketFD);
