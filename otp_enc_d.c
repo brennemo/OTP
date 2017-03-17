@@ -86,24 +86,15 @@ int main(int argc, char *argv[])
 			//printf("BUFFER IN SERVER: %s\n", buffer);
 			//printf("Buffer size: %d\n", strlen(buffer));
 			//Split key and plain text 
-			/*
-			char messageType[4];
-			char keyEnd[] = "#"; //strEnd[] = "@";
-			char typeEnd[] = "%";
-			int plainZero, endOfString; 				//1st index of plain text 
-			*/
-			
+
 			plainZero = strcspn(buffer, keyEnd);
 			plainZero += 2; 
 
 			
 			//endOfString = strcspn(buffer, strEnd);
 			//printf("end of string: %s\n", buffer[endOfString]);
-
 			//printf("1st char of plain text: \'%c\'\n", buffer[plainZero]);
-			//plainText = malloc((plnLen + 1) * sizeof(char));	//allocate space for buffers (+1 for '\0')
-			//char *keyText = malloc((plainZero - 1) * sizeof(char));
-			//char *plainText = malloc((strlen(buffer) - plainZero) * sizeof(char));
+
 			
 			//copy key into separate string
 			strncpy(keyText, buffer, plainZero - 2);
