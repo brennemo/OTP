@@ -13,6 +13,8 @@
 #include <signal.h>
 #include <fcntl.h>
 
+#define BUFFER_SIZE 100000
+
 void error(const char *msg) { perror(msg); exit(1); } // Error function used for reporting issues
 
 void catchSIGCHLD(int signo);				//catch SIGCHLD to manage child processes 
@@ -22,9 +24,17 @@ int main(int argc, char *argv[])
 	int i;
 	int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
 	socklen_t sizeOfClientInfo;
-	char buffer[100000];
+	char buffer[BUFFER_SIZE];
 	struct sockaddr_in serverAddress, clientAddress;
 	char temp, key, encrypt;
+	
+	char messageType[4];
+	char keyEnd[] = "#"; //strEnd[] = "@";
+	char typeEnd[] = "%";
+	int plainZero, endOfString; 				//1st index of plain text 
+	
+	char keyText[BUFFER_SIZE];
+	char plainText[BUFFER_SIZE];
 
 	//Initialize sigaction struct, signal handler, and override default actions
 	struct sigaction SIGCHLD_action = { 0 }; 
@@ -69,120 +79,87 @@ int main(int argc, char *argv[])
 			exit(1);
 		}
 		else if (childPid == 0) {
-			memset(buffer, '\0', 100000);
-			charsRead = recv(establishedConnectionFD, buffer, 99999, 0); // Read the client's message from the socket
+			
+			memset(buffer, '\0', BUFFER_SIZE);
+			charsRead = recv(establishedConnectionFD, buffer, BUFFER_SIZE - 1, 0); // Read the client's message from the socket
 			if (charsRead < 0) error("ERROR reading from socket");
 			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
 			
 			//printf("BUFFER IN SERVER: %s\n", buffer);
 			//printf("Buffer size: %d\n", strlen(buffer));
-			//Split key and plain text 
-			char keyEnd[] = "#"; //strEnd[] = "@";
-			int plainZero, endOfString; 				//1st index of plain text 
-			plainZero = strcspn(buffer, keyEnd);
-			plainZero += 2; 
 			
-			//endOfString = strcspn(buffer, strEnd);
-			//printf("end of string: %s\n", buffer[endOfString]);
+			//Get encode/decode indicator from beginning of string
+			strncpy(messageType, buffer, 3);
+			if (strcmp(messageType, "DEC") != 0) {
+				fprintf(stderr, "Rejected.\n");
+				exit(0);
+			}
+			 else {
+				//Split key and plain text 
+				plainZero = strcspn(buffer, keyEnd);
 
-			//printf("1st char of plain text: \'%c\'\n", buffer[plainZero]);
-			//plainText = malloc((plnLen + 1) * sizeof(char));	//allocate space for buffers (+1 for '\0')
-			char *keyText = malloc((plainZero - 1) * sizeof(char));
-			char *plainText = malloc((strlen(buffer) - plainZero) * sizeof(char));
-			
-			//copy key into separate string
-			strncpy(keyText, buffer, plainZero - 2);
-			//printf("%s\n", keyText);
-			
-			//copy plain text into separate string 
-			int j = 0;
-			for (i = plainZero; i < strlen(buffer) - 2; i++) {
-					plainText[j] = buffer[i];
+				//copy key into separate string
+				int j = 0;
+				for (i = 5; i < plainZero; i++) {
+					keyText[j] = buffer[i];
 					j++;
-			}
-			
-			//printf("plain text: %s\n", plainText);
-			//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
-
-			/*
-			// Encrypt Message
-			//char *testMessage = "HELLO", *testKey = "XMCKL"; 
-			char *encryptedMessage = malloc(strlen(plainText) * sizeof(char));
-			memset(encryptedMessage, '\0', strlen(encryptedMessage));
-
-			//convert ASCII values to 0...26 for A...' '
-			for (i = 0; i < strlen(plainText); i++) {
-				if (plainText[i] == ' ') 
-					temp = 26; 
-				else 
-					temp = plainText[i] - 65;
-				if (keyText[i] == ' ')
-					key = 26;
-				else 
-					key = keyText[i] - 65; 
-
-				encrypt = (temp + key) % 27;
-				encryptedMessage[i] = encrypt;
-			}
-
-			//convert encrypted string back to ASCII values 
-			for (i = 0; i < strlen(encryptedMessage); i++) {
-				if (encryptedMessage[i] == 26) {
-					encryptedMessage[i] = ' ';
-				}	
-				else {
-					encryptedMessage[i] += 65; 
 				}
-			}
-			*/
-			
-			printf("Encrypted message: %s\n", encryptedMessage);
-			printf("Key: %s\n", keyText);
-			
-			
-			//Decrypt message
-			char *decryptedMessage = malloc(strlen(encryptedMessage) * sizeof(char));
-			memset(decryptedMessage, '\0', strlen(decryptedMessage));
-			char decrypt; 
-			
-			//convert ASCII values to 0...26 for A...' '
-			
-			for (i = 0; i < strlen(encryptedMessage); i++) {
-				if (encryptedMessage[i] == ' ') 
-					temp = 26; 
-				else 
-					temp = encryptedMessage[i] - 65;
-				if (keyText[i] == ' ')
-					key = 26;
-				else 
-					key = keyText[i] - 65; 
-
-				decrypt = (temp - key + 27) % 27;
-				decryptedMessage[i] = decrypt;
-			}
-
-			//convert decrypted string back to ASCII values 
-			for (i = 0; i < strlen(decryptedMessage); i++) {
-				if (decryptedMessage[i] == 26) {
-					decryptedMessage[i] = ' ';
-				}	
-				else {
-					decryptedMessage[i] += 65; 
+				
+				//copy plain text into separate string 
+				j = 0;
+				for (i = plainZero + 2; i < strlen(buffer) - 2; i++) {
+						plainText[j] = buffer[i];
+						j++;
 				}
-			}
+				
+				printf("plain text: %s\n", plainText);
+				//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
+
+					
+				//Decrypt message
+				char *decryptedMessage = malloc(strlen(encryptedMessage) * sizeof(char));
+				memset(decryptedMessage, '\0', strlen(decryptedMessage));
+				char decrypt; 
+				
+				//convert ASCII values to 0...26 for A...' '
+				
+				for (i = 0; i < strlen(encryptedMessage); i++) {
+					if (encryptedMessage[i] == ' ') 
+						temp = 26; 
+					else 
+						temp = encryptedMessage[i] - 65;
+					if (keyText[i] == ' ')
+						key = 26;
+					else 
+						key = keyText[i] - 65; 
+
+					decrypt = (temp - key + 27) % 27;
+					decryptedMessage[i] = decrypt;
+				}
+
+				//convert decrypted string back to ASCII values 
+				for (i = 0; i < strlen(decryptedMessage); i++) {
+					if (decryptedMessage[i] == 26) {
+						decryptedMessage[i] = ' ';
+					}	
+					else {
+						decryptedMessage[i] += 65; 
+					}
+				}
+			
+
+				printf("Decrypted message: %s\n", decryptedMessage);
+				printf("Key: %s\n", keyText);
+
+
+				// Send a Success message back to the client
+				charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
+				if (charsRead < 0) error("ERROR writing to socket");
+			}				//messageType == ENC 
 		
-
-			printf("Decrypted message: %s\n", decryptedMessage);
-			for (i = 0; i < strlen(decryptedMessage); i++) {
-					printf("%d	%c\n", decryptedMessage[i], decryptedMessage[i]);
-			}
-
-			// Send a Success message back to the client
-			charsRead = send(establishedConnectionFD, "I am the server, and I got your message", 39, 0); // Send success back
-			if (charsRead < 0) error("ERROR writing to socket");
 			
-			free(keyText);
-			free(plainText);
+			//close(listenSocketFD);
+			//exit(0);
 
 		}					//if childPid == 0
 		else {				//childPid == parentPid 
@@ -192,10 +169,7 @@ int main(int argc, char *argv[])
 
 		
 	}						//while loop
-	//free(plainText);
-	//free(keyText);
-	//free(encryptedMessage);
-	//free(decryptedMessage);
+
 	close(listenSocketFD); // Close the listening socket
 	return 0; 
 }
