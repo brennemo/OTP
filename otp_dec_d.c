@@ -147,6 +147,8 @@ int main(int argc, char *argv[])
 						decryptedMessage[i] += 65; 
 					}
 				}
+				
+				decryptedMessage[strlen(plainText)] = '\n';
 			
 
 				//printf("Decrypted message: %s\n", decryptedMessage);

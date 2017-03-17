@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 				}
 				
 				//printf("plain text: %s\n", plainText);
-				printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
+				//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
 				
 				// Encrypt Message
@@ -145,6 +145,7 @@ int main(int argc, char *argv[])
 						encryptedMessage[i] += 65; 
 					}
 				}
+				encryptedMessage[strlen(plainText)] = '\n';
 				
 				//printf("Encrypted message: %s\n", encryptedMessage);
 				//printf("Key: %s\n", keyText);

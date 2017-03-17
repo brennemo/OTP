@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = 0; i < strlen(keyText) - 1; i++) {
+		if ((keyText[i] < 'A' || keyText[i] > 'Z') && keyText[i] != ' ') {		
 			fprintf(stderr, "input contains bad characters\n");
 			exit(1);
 		}
