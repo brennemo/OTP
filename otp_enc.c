@@ -23,10 +23,11 @@ int main(int argc, char *argv[])
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
-	char buffer[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE], encoded[BUFFER_SIZE];
 	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
+	int responseLength;
     
 	if (argc < 4) { fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); exit(0); } // Check usage & args
 
@@ -115,15 +116,31 @@ int main(int argc, char *argv[])
 	// Send message to server
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
-	if (charsWritten < strlen(buffer)) printf("CLIENT: WARNING: Not all data written to socket!\n");
+	if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 	
 
 	// Get return message from server
+	memset(encoded, '\0', BUFFER_SIZE);
+	responseLength = 0;
+	while (responseLength > strlen(plainText)) {
+			memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
+			charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); // Read data from the socket, leaving \0 at end
+			strcat(encoded, buffer charsRead - 1);
+			responseLength += charsRead - 1;
+	}
+	encoded[strlen(plainText)] = '\0';
+	/*
 	memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
 	charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); // Read data from the socket, leaving \0 at end
 	if (charsRead < 0) error("CLIENT: ERROR reading from socket");
 	//printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
-	printf("%s\n", buffer);
+	printf("%s\n", buffer);	
+	*/
+	/*
+	for (i = 0; i < strlen(buffer); i++) {
+		printf("%d	%c\n", buffer[i], buffer[i]);
+	}
+	*/
 
 	close(socketFD); // Close the socket
 

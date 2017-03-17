@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 	// Send message to server
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
-	if (charsWritten < strlen(buffer)) printf("CLIENT: WARNING: Not all data written to socket!\n");
+	if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 	
 
 	// Get return message from server
@@ -137,6 +137,10 @@ int main(int argc, char *argv[])
 	//printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
 
 	printf("%s\n", buffer);
+	/*for (i = 0; i < strlen(buffer); i++) {
+		printf("%d	%c\n", buffer[i], buffer[i]);
+	}*/
+	
 	close(socketFD); // Close the socket
 
 	free(plainText);
