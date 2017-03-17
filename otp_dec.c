@@ -136,6 +136,7 @@ int main(int argc, char *argv[])
 	if (charsRead < 0) error("CLIENT: ERROR reading from socket");
 	//printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
 
+	printf("%s\n", buffer);
 	close(socketFD); // Close the socket
 
 	free(plainText);
