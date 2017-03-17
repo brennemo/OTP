@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 			memset(buffer, '\0', BUFFER_SIZE);
 			charsRead = recv(establishedConnectionFD, buffer, BUFFER_SIZE - 1, 0); // Read the client's message from the socket
 			if (charsRead < 0) error("ERROR reading from socket");
-			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
+			//printf("SERVER: I received this from the client: \"%s\"\n", buffer);
 			
 			//printf("BUFFER IN SERVER: %s\n", buffer);
 			//printf("Buffer size: %d\n", strlen(buffer));
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 						j++;
 				}
 				
-				printf("plain text: %s\n", plainText);
+				//printf("plain text: %s\n", plainText);
 				//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
 				
@@ -145,8 +145,8 @@ int main(int argc, char *argv[])
 					}
 				}
 				
-				printf("Encrypted message: %s\n", encryptedMessage);
-				printf("Key: %s\n", keyText);
+				//printf("Encrypted message: %s\n", encryptedMessage);
+				//printf("Key: %s\n", keyText);
 
 
 				// Send a Success message back to the client
