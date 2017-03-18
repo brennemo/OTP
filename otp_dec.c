@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	newline = strcspn(keyText, delim);
 	//printf("Newline in keyText (length %d) at %d\n", newline, keyLen);
 	
-	plainText[strlen(plainText) - 2] = '\0';	//append '\0' to each, overwriting '\n'	
+	plainText[strlen(plainText) - 1] = '\0';	//append '\0' to each, overwriting '\n'	
 	keyText[strlen(keyText) - 1] = '\0';		
 
 	//Validate characters in plain text and key, minus null terminator

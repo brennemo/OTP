@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	char temp, key, encrypt;
 	
 	char messageType[4];
-	char keyEnd[] = "#"; //strEnd[] = "@";
+	char keyEnd[] = "#", strEnd[] = "@";
 	char typeEnd[] = "%";
 	int plainZero, endOfString; 				//1st index of plain text 
 	
@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
 			 else {
 				//Split key and plain text 
 				plainZero = strcspn(buffer, keyEnd);
+				endOfString = strcspn(buffer, strEnd);
 
 				//copy key into separate string
 				int j = 0;
@@ -118,8 +119,12 @@ int main(int argc, char *argv[])
 				}
 				
 				//copy plain text into separate string 
+				/*i = 0; j = plainZero + 2; 
+				while (buffer[i] != '@') {
+					plainText[i++] = buffer[j++];
+				}*/
 				j = 0;
-				for (i = plainZero + 2; i < strlen(buffer) - 2; i++) {
+				for (i = plainZero + 2; i < endOfString; i++) {
 						plainText[j] = buffer[i];
 						j++;
 				}
@@ -156,7 +161,7 @@ int main(int argc, char *argv[])
 						encryptedMessage[i] += 65; 
 					}
 				}
-				encryptedMessage[strlen(plainText)] = '\n';
+				//encryptedMessage[strlen(plainText)] = '\n';
 				
 				//printf("Encrypted message: %s\n", encryptedMessage);
 				//printf("Key: %s\n", keyText);
