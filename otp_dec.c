@@ -14,7 +14,7 @@
 #include <fcntl.h>
 
 #define BUFFER_SIZE 100000
-#define CHUNK_SIZE 10000
+#define CHUNK_SIZE 1000
 
 void error(const char *msg) { perror(msg); exit(0); } // Error function used for reporting issues
 
@@ -128,24 +128,25 @@ int main(int argc, char *argv[])
 
 	// Send message to server	
 	sentLength = 0;
-	
+	/*
 	while(sentLength <= strlen(buffer)) {
 		//attempt to copy whole string
-		memset(chunk, '\0', BUFFER_SIZE);
-		strncpy(chunk, &buffer[sentLength], BUFFER_SIZE - 1);
+		memset(chunk, '\0', CHUNK_SIZE);
+		strncpy(chunk, &buffer[sentLength], CHUNK_SIZE - 1);
+		chunk[CHUNK_SIZE - 1] = '\0';
 		
-		charsWritten = send(socketFD, buffer, sizeof(buffer), 0); // Write to the server
-		
+		charsWritten = send(socketFD, chunk, CHUNK_SIZE, 0); // Write to the server
 		if (charsWritten < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
 		
-		sentLength += charsWritten; 
+		sentLength += (CHUNK_SIZE - 1); 
 		//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 	}
-	/*
+	*/
+	
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
 	if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
-	*/
+	
 
 	// Get return message from server
 	/*memset(decoded, '\0', BUFFER_SIZE);

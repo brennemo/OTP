@@ -14,6 +14,7 @@
 #include <fcntl.h>
 
 #define BUFFER_SIZE 100000
+#define CHUNK_SIZE 1000
 
 void error(const char *msg) { perror(msg); exit(1); } // Error function used for reporting issues
 
@@ -167,23 +168,23 @@ int main(int argc, char *argv[])
 
 				// Send a Success message back to the client
 				sentLength = 0;
-				
+				/*
 				while(sentLength < strlen(decryptedMessage)) {
 					//attempt to copy whole string
-					memset(chunk, '\0', BUFFER_SIZE);
-					strncpy(chunk, &decryptedMessage[sentLength], BUFFER_SIZE - 1);
+					memset(chunk, '\0', CHUNK_SIZE);
+					strncpy(chunk, &decryptedMessage[sentLength], CHUNK_SIZE - 1);
+					chunk[CHUNK_SIZE - 1] = '\0';
 					
-					charsRead = send(establishedConnectionFD, decryptedMessage, strlen(decryptedMessage), 0); // Write to the server
-					
+					charsRead = send(establishedConnectionFD, chunk, CHUNK_SIZE, 0); // Write to the server
 					if (charsRead < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
 					
-					sentLength += charsRead; 
+					sentLength += (CHUNK_SIZE - 1);  
 					//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 				}
+				*/
 				
-				
-				//charsRead = send(establishedConnectionFD, decryptedMessage, sizeof(decryptedMessage), 0); // Send success back
-				//if (charsRead < 0) error("ERROR writing to socket");
+				charsRead = send(establishedConnectionFD, decryptedMessage, sizeof(decryptedMessage), 0); // Send success back
+				if (charsRead < 0) error("ERROR writing to socket");
 			}				//messageType == ENC 
 		
 			

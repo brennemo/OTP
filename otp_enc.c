@@ -117,21 +117,25 @@ int main(int argc, char *argv[])
 	// Send message to server 
 	
 	sentLength = 0;
-
+	while (sentLength <= strlen(buffer)) {
+		charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
+		sentLength += charsWritten;
+	}
+	/*
 	while(sentLength <= strlen(buffer)) {
 		//attempt to copy whole string
-		memset(chunk, '\0', BUFFER_SIZE);
-		strncpy(chunk, &buffer[sentLength], BUFFER_SIZE - 1);
-		buffer[CHUNK_SIZE] = '\0';
+		memset(chunk, '\0', CHUNK_SIZE);
+		strncpy(chunk, &buffer[sentLength], CHUNK_SIZE - 1);
+		chunk[CHUNK_SIZE-1] = '\0';
 		
-		charsWritten = send(socketFD, buffer, sizeof(buffer), 0); // Write to the server
-		
+		charsWritten = send(socketFD, chunk, CHUNK_SIZE, 0); // Write to the server
 		if (charsWritten < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
 		
-		sentLength += CHUNK_SIZE - 1; 
+		sentLength += (CHUNK_SIZE - 1); 
 		//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 	}
-	
+	*/
+
 	
 	/*
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
