@@ -14,6 +14,7 @@
 #include <fcntl.h>
 
 #define BUFFER_SIZE 100000
+#define CHUNK_SIZE 10000
 
 void error(const char *msg) { perror(msg); exit(0); } // Error function used for reporting issues
 
@@ -23,7 +24,7 @@ int main(int argc, char *argv[])
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
-	char buffer[BUFFER_SIZE], encoded[BUFFER_SIZE], chunk[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE], encoded[BUFFER_SIZE], chunk[CHUNK_SIZE];
 	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
@@ -117,12 +118,12 @@ int main(int argc, char *argv[])
 	
 	sentLength = 0;
 
-	while(sentLength < strlen(buffer)) {
+	while(sentLength <= strlen(buffer)) {
 		//attempt to copy whole string
 		memset(chunk, '\0', BUFFER_SIZE);
 		strncpy(chunk, &buffer[sentLength], BUFFER_SIZE - 1);
 		
-		charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
+		charsWritten = send(socketFD, buffer, sizeof(buffer), 0); // Write to the server
 		
 		if (charsWritten < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
 		

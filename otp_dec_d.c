@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
 
 				// Send a Success message back to the client
 				sentLength = 0;
-				/*
+				
 				while(sentLength < strlen(decryptedMessage)) {
 					//attempt to copy whole string
 					memset(chunk, '\0', BUFFER_SIZE);
@@ -172,10 +172,10 @@ int main(int argc, char *argv[])
 					sentLength += charsRead; 
 					//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 				}
-				*/
 				
-				charsRead = send(establishedConnectionFD, decryptedMessage, sizeof(decryptedMessage), 0); // Send success back
-				if (charsRead < 0) error("ERROR writing to socket");
+				
+				//charsRead = send(establishedConnectionFD, decryptedMessage, sizeof(decryptedMessage), 0); // Send success back
+				//if (charsRead < 0) error("ERROR writing to socket");
 			}				//messageType == ENC 
 		
 			
