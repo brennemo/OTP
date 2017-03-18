@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 	int i;
 	int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
 	socklen_t sizeOfClientInfo;
-	char buffer[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE], readBuffer[BUFFER_SIZE];
 	struct sockaddr_in serverAddress, clientAddress;
 	char temp, key, encrypt;
 	
@@ -81,9 +81,17 @@ int main(int argc, char *argv[])
 		}
 		else if (childPid == 0) {
 			
+			//read concatenated message in chunks
 			memset(buffer, '\0', BUFFER_SIZE);
-			charsRead = recv(establishedConnectionFD, buffer, BUFFER_SIZE - 1, 0); // Read the client's message from the socket
-			if (charsRead < 0) error("ERROR reading from socket");
+			while(strstr(buffer, "@@") == NULL) {
+				memset(readBuffer, '\0', BUFFER_SIZE);
+				charsRead = recv(establishedConnectionFD, readBuffer, BUFFER_SIZE - 1, 0); // Read the client's message from the socket
+				strcat(buffer,readBuffer);
+				if (charsRead < 0) error("ERROR reading from socket");
+			}
+			//endOfString = ststr(buffer, "@@") - buffer;
+			//buffer[endOfString] = '\0';
+			
 			//printf("SERVER: I received this from the client: \"%s\"\n", buffer);
 			
 			//printf("BUFFER IN SERVER: %s\n", buffer);

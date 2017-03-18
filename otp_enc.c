@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
-	int responseLength;
+	int sentLength, responseLength;
     
 	if (argc < 4) { fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); exit(0); } // Check usage & args
 
@@ -113,22 +113,42 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Error: could not contact otp_enc_d on port %d\n", portNumber);
 
 
-	// Send message to server
+	// Send message to 
+	/*
+	sentLength = 0;
+	char chunk[BUFFER_SIZE];
+	while(sentLength > strlen(buffer)) {
+		//attempt to copy whole string
+		memset(chunk, '\0', BUFFER_SIZE);
+		strncpy(chunk, &buffer[sentLength], BUFFER_SIZE - 1);
+		
+		charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
+		
+		if (charsWritten < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
+		
+		sentLength += charsWritten; 
+		//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
+	}
+	*/
+	
+	
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
 	if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
+	
 	
 
 	// Get return message from server
 	memset(encoded, '\0', BUFFER_SIZE);
 	responseLength = 0;
-	while (responseLength > strlen(plainText)) {
+	while (responseLength < plnLen) {
 			memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
 			charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); // Read data from the socket, leaving \0 at end
-			strcat(encoded, buffer charsRead - 1);
+			strncat(encoded, buffer, charsRead - 1);
 			responseLength += charsRead - 1;
 	}
 	encoded[strlen(plainText)] = '\0';
+	printf("%s\n", encoded);	
 	/*
 	memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
 	charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); // Read data from the socket, leaving \0 at end

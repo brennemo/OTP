@@ -23,10 +23,11 @@ int main(int argc, char *argv[])
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
-	char buffer[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE], decoded[BUFFER_SIZE];
 	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
+		int responseLength;
     
 	if (argc < 4) { fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); exit(0); } // Check usage & args
 
@@ -131,12 +132,27 @@ int main(int argc, char *argv[])
 	
 
 	// Get return message from server
+	/*
+	memset(decoded, '\0', BUFFER_SIZE);
+	responseLength = 0;
+	while (responseLength < plnLen) {
+			memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
+			charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); // Read data from the socket, leaving \0 at end
+			strncat(decoded, buffer, charsRead - 1);
+			responseLength += charsRead - 1;
+	}
+	decoded[strlen(plainText)] = '\0';
+	printf("%s\n",decoded);	
+	*/
+	
+	
 	memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
 	charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); // Read data from the socket, leaving \0 at end
 	if (charsRead < 0) error("CLIENT: ERROR reading from socket");
 	//printf("CLIENT: I received this from the server: \"%s\"\n", buffer);
 
 	printf("%s\n", buffer);
+	
 	/*for (i = 0; i < strlen(buffer); i++) {
 		printf("%d	%c\n", buffer[i], buffer[i]);
 	}*/
