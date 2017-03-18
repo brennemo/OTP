@@ -1,4 +1,6 @@
 /*
+** Morgan Brenner
+** CS 344 Program 4
 **	otp_enc_d.c
 **
 */

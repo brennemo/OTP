@@ -1,5 +1,7 @@
 /*
-**	otp_dec.c
+** Morgan Brenner
+** CS 344 Program 4
+** otp_dec.c
 **
 */
 
