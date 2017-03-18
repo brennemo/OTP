@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Error: could not contact otp_enc_d on port %d\n", portNumber);
 
 
-	// Send message to 
+	// Send message to server 
 	
 	sentLength = 0;
 

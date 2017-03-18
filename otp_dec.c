@@ -14,6 +14,7 @@
 #include <fcntl.h>
 
 #define BUFFER_SIZE 100000
+#define CHUNK_SIZE 10000
 
 void error(const char *msg) { perror(msg); exit(0); } // Error function used for reporting issues
 
@@ -23,11 +24,11 @@ int main(int argc, char *argv[])
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
-	char buffer[BUFFER_SIZE], decoded[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE], decoded[BUFFER_SIZE], chunk[CHUNK_SIZE];
 	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
-		int responseLength;
+	int sentLength, responseLength;
     
 	if (argc < 4) { fprintf(stderr,"USAGE: %s hostname port\n", argv[0]); exit(0); } // Check usage & args
 
@@ -125,11 +126,26 @@ int main(int argc, char *argv[])
 
 
 
-	// Send message to server
+	// Send message to server	
+	sentLength = 0;
+
+	while(sentLength <= strlen(buffer)) {
+		//attempt to copy whole string
+		memset(chunk, '\0', BUFFER_SIZE);
+		strncpy(chunk, &buffer[sentLength], BUFFER_SIZE - 1);
+		
+		charsWritten = send(socketFD, buffer, sizeof(buffer), 0); // Write to the server
+		
+		if (charsWritten < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
+		
+		sentLength += charsWritten; 
+		//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
+	}
+	/*
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
 	if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
-	
+	*/
 
 	// Get return message from server
 	/*
