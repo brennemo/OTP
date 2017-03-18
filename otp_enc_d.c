@@ -14,7 +14,7 @@
 #include <fcntl.h>
 
 #define BUFFER_SIZE 100000
-#define CHUNK_SIZE 10000
+#define CHUNK_SIZE 1000
 
 void error(const char *msg) { perror(msg); exit(1); } // Error function used for reporting issues
 
@@ -169,12 +169,13 @@ int main(int argc, char *argv[])
 					//attempt to copy whole string
 					memset(chunk, '\0', BUFFER_SIZE);
 					strncpy(chunk, &encryptedMessage[sentLength], BUFFER_SIZE - 1);
+					buffer[CHUNK_SIZE] = '\0';
 					
 					charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Write to the server
 					
 					if (charsRead < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
 					
-					sentLength += charsRead; 
+					sentLength += CHUNK_SIZE - 1; 
 					//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 				}
 				

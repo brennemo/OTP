@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 
 	// Send message to server	
 	sentLength = 0;
-
+	
 	while(sentLength <= strlen(buffer)) {
 		//attempt to copy whole string
 		memset(chunk, '\0', BUFFER_SIZE);
@@ -148,10 +148,9 @@ int main(int argc, char *argv[])
 	*/
 
 	// Get return message from server
-	/*
-	memset(decoded, '\0', BUFFER_SIZE);
+	/*memset(decoded, '\0', BUFFER_SIZE);
 	responseLength = 0;
-	while (responseLength < plnLen) {
+	while (responseLength < plnLen - 2) {
 			memset(buffer, '\0', sizeof(buffer)); // Clear out the buffer again for reuse
 			charsRead = recv(socketFD, buffer, sizeof(buffer) - 1, 0); // Read data from the socket, leaving \0 at end
 			strncat(decoded, buffer, charsRead - 1);
