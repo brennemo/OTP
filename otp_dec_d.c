@@ -35,7 +35,9 @@ int main(int argc, char *argv[])
 	
 	char keyText[BUFFER_SIZE];
 	char plainText[BUFFER_SIZE];
-	char decryptedMessage[BUFFER_SIZE];
+	char decryptedMessage[BUFFER_SIZE], chunk[BUFFER_SIZE];
+	
+	int sentLength;
 
 	//Initialize sigaction struct, signal handler, and override default actions
 	struct sigaction SIGCHLD_action = { 0 }; 
@@ -156,6 +158,22 @@ int main(int argc, char *argv[])
 
 
 				// Send a Success message back to the client
+				sentLength = 0;
+				/*
+				while(sentLength < strlen(decryptedMessage)) {
+					//attempt to copy whole string
+					memset(chunk, '\0', BUFFER_SIZE);
+					strncpy(chunk, &decryptedMessage[sentLength], BUFFER_SIZE - 1);
+					
+					charsRead = send(establishedConnectionFD, decryptedMessage, strlen(decryptedMessage), 0); // Write to the server
+					
+					if (charsRead < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
+					
+					sentLength += charsRead; 
+					//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
+				}
+				*/
+				
 				charsRead = send(establishedConnectionFD, decryptedMessage, sizeof(decryptedMessage), 0); // Send success back
 				if (charsRead < 0) error("ERROR writing to socket");
 			}				//messageType == ENC 

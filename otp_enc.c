@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
-	char buffer[BUFFER_SIZE], encoded[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE], encoded[BUFFER_SIZE], chunk[BUFFER_SIZE];
 	int plainTextFile, keyFile;
 	int plnLen, keyLen; 
 	char *plainText, *keyText; 
@@ -114,10 +114,10 @@ int main(int argc, char *argv[])
 
 
 	// Send message to 
-	/*
+	
 	sentLength = 0;
-	char chunk[BUFFER_SIZE];
-	while(sentLength > strlen(buffer)) {
+
+	while(sentLength < strlen(buffer)) {
 		//attempt to copy whole string
 		memset(chunk, '\0', BUFFER_SIZE);
 		strncpy(chunk, &buffer[sentLength], BUFFER_SIZE - 1);
@@ -129,13 +129,13 @@ int main(int argc, char *argv[])
 		sentLength += charsWritten; 
 		//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 	}
-	*/
 	
 	
+	/*
 	charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 	if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
 	if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
-	
+	*/
 	
 
 	// Get return message from server

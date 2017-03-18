@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 	int i;
 	int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
 	socklen_t sizeOfClientInfo;
-	char buffer[BUFFER_SIZE], readBuffer[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE], readBuffer[BUFFER_SIZE], chunk[BUFFER_SIZE];;
 	struct sockaddr_in serverAddress, clientAddress;
 	char temp, key, encrypt;
 	
@@ -36,6 +36,8 @@ int main(int argc, char *argv[])
 	char keyText[BUFFER_SIZE];
 	char plainText[BUFFER_SIZE];
 	char encryptedMessage[BUFFER_SIZE];
+	
+	int sentLength;
 
 	//Initialize sigaction struct, signal handler, and override default actions
 	struct sigaction SIGCHLD_action = { 0 }; 
@@ -160,8 +162,23 @@ int main(int argc, char *argv[])
 
 
 				// Send a Success message back to the client
-				charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
-				if (charsRead < 0) error("ERROR writing to socket");
+				sentLength = 0;
+				
+				while(sentLength < strlen(encryptedMessage)) {
+					//attempt to copy whole string
+					memset(chunk, '\0', BUFFER_SIZE);
+					strncpy(chunk, &encryptedMessage[sentLength], BUFFER_SIZE - 1);
+					
+					charsRead = send(establishedConnectionFD, encryptedMessage, strlen(encryptedMessage), 0); // Write to the server
+					
+					if (charsRead < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
+					
+					sentLength += charsRead; 
+					//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
+				}
+				
+				//charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
+				//if (charsRead < 0) error("ERROR writing to socket");
 			}				//messageType == ENC 
 		
 			
