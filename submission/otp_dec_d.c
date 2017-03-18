@@ -1,7 +1,7 @@
 /*
 ** Morgan Brenner
 ** CS 344 Program 4
-**	otp_enc_d.c
+**	otp_dec_d.c
 **
 */
 
@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	int i;
 	int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
 	socklen_t sizeOfClientInfo;
-	char buffer[BUFFER_SIZE], readBuffer[BUFFER_SIZE], chunk[BUFFER_SIZE];
+	char buffer[BUFFER_SIZE], readBuffer[BUFFER_SIZE];
 	struct sockaddr_in serverAddress, clientAddress;
 	char temp, key, encrypt;
 	
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
 	
 	char keyText[BUFFER_SIZE];
 	char plainText[BUFFER_SIZE];
-	char encryptedMessage[BUFFER_SIZE];
+	char decryptedMessage[BUFFER_SIZE], chunk[BUFFER_SIZE];
 	
 	int sentLength;
 
@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
 		}
 		else if (childPid == 0) {
 			
-			//read concatenated message in chunks
 			memset(buffer, '\0', BUFFER_SIZE);
 			while(strstr(buffer, "@@") == NULL) {
 				memset(readBuffer, '\0', BUFFER_SIZE);
@@ -95,9 +94,17 @@ int main(int argc, char *argv[])
 				if (charsRead < 0) error("ERROR reading from socket");
 			}
 			
+			//memset(buffer, '\0', BUFFER_SIZE);
+			//charsRead = recv(establishedConnectionFD, buffer, BUFFER_SIZE - 1, 0); // Read the client's message from the socket
+			//if (charsRead < 0) error("ERROR reading from socket");
+			//printf("SERVER: I received this from the client: \"%s\"\n", buffer);
+			
+			//printf("BUFFER IN SERVER: %s\n", buffer);
+			//printf("Buffer size: %d\n", strlen(buffer));
+			
 			//Get encode/decode indicator from beginning of string
 			strncpy(messageType, buffer, 3);
-			if (strcmp(messageType, "ENC") != 0) {
+			if (strcmp(messageType, "DEC") != 0) {
 				fprintf(stderr, "Rejected.\n");
 				exit(1);
 			}
@@ -114,17 +121,24 @@ int main(int argc, char *argv[])
 				}
 				
 				//copy plain text into separate string 
+				//memcpy(plainText, '\0', BUFFER_SIZE);
 				j = 0;
 				for (i = plainZero + 2; i < endOfString; i++) {
 						plainText[j] = buffer[i];
 						j++;
 				}
 				
-				
-				// Encrypt Message
-				memset(encryptedMessage, '\0', strlen(encryptedMessage));
+				printf("plain text: %s\n", plainText);
+				//printf("keyText size: %d, plainText size:%d\n", strlen(keyText), strlen(plainText));
 
+					
+				//Decrypt message
+				//char *decryptedMessage = malloc(strlen(plainText) * sizeof(char));
+				memset(decryptedMessage, '\0', strlen(decryptedMessage));
+				char decrypt; 
+				
 				//convert ASCII values to 0...26 for A...' '
+				
 				for (i = 0; i < strlen(plainText); i++) {
 					if (plainText[i] == ' ') 
 						temp = 26; 
@@ -135,46 +149,51 @@ int main(int argc, char *argv[])
 					else 
 						key = keyText[i] - 65; 
 
-					encrypt = (temp + key) % 27;
-					encryptedMessage[i] = encrypt;
+					decrypt = (temp - key + 27) % 27;
+					decryptedMessage[i] = decrypt;
 				}
 
-				//convert encrypted string back to ASCII values 
+				//convert decrypted string back to ASCII values 
 				for (i = 0; i < strlen(plainText); i++) {
-					if (encryptedMessage[i] == 26) {
-						encryptedMessage[i] = ' ';
+					if (decryptedMessage[i] == 26) {
+						decryptedMessage[i] = ' ';
 					}	
 					else {
-						encryptedMessage[i] += 65; 
+						decryptedMessage[i] += 65; 
 					}
 				}
+				
+				//decryptedMessage[strlen(plainText)] = '\n';
+			
+
+				//printf("Decrypted message: %s\n", decryptedMessage);
+				//printf("Key: %s\n", keyText);
+
 
 				// Send a Success message back to the client
 				sentLength = 0;
-				while (sentLength <= strlen(encryptedMessage)) {
-					charsRead = send(establishedConnectionFD, encryptedMessage, strlen(encryptedMessage), 0); // Write to the server
-					sentLength += charsRead;
-				}
 				/*
-				while(sentLength <= strlen(encryptedMessage)) {
+				while(sentLength < strlen(decryptedMessage)) {
 					//attempt to copy whole string
 					memset(chunk, '\0', CHUNK_SIZE);
-					strncpy(chunk, &encryptedMessage[sentLength], CHUNK_SIZE - 1);
-					chunk[CHUNK_SIZE-1] = '\0';
+					strncpy(chunk, &decryptedMessage[sentLength], CHUNK_SIZE - 1);
+					chunk[CHUNK_SIZE - 1] = '\0';
 					
 					charsRead = send(establishedConnectionFD, chunk, CHUNK_SIZE, 0); // Write to the server
 					if (charsRead < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
 					
-					sentLength += (CHUNK_SIZE - 1); 
+					sentLength += (CHUNK_SIZE - 1);  
 					//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 				}
 				*/
 				
-				//charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
-				//if (charsRead < 0) error("ERROR writing to socket");
+				charsRead = send(establishedConnectionFD, decryptedMessage, sizeof(decryptedMessage), 0); // Send success back
+				if (charsRead < 0) error("ERROR writing to socket");
 			}				//messageType == ENC 
 		
 			
+			//close(listenSocketFD);
+			//exit(0);
 
 		}					//if childPid == 0
 		else {				//childPid == parentPid 
