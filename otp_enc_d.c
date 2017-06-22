@@ -15,7 +15,7 @@
 #include <signal.h>
 #include <fcntl.h>
 
-#define BUFFER_SIZE 100000
+#define BUFFER_SIZE 150000
 #define CHUNK_SIZE 1000
 
 void error(const char *msg) { perror(msg); exit(1); } // Error function used for reporting issues
@@ -151,12 +151,12 @@ int main(int argc, char *argv[])
 
 				// Send a Success message back to the client
 				sentLength = 0;
-				while (sentLength <= strlen(encryptedMessage)) {
+				/*while (sentLength <= strlen(encryptedMessage)) {
 					charsRead = send(establishedConnectionFD, encryptedMessage, strlen(encryptedMessage), 0); // Write to the server
 					sentLength += charsRead;
-				}
-				/*
-				while(sentLength <= strlen(encryptedMessage)) {
+				}*/
+				
+				while(sentLength < strlen(encryptedMessage)) {
 					//attempt to copy whole string
 					memset(chunk, '\0', CHUNK_SIZE);
 					strncpy(chunk, &encryptedMessage[sentLength], CHUNK_SIZE - 1);
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
 					sentLength += (CHUNK_SIZE - 1); 
 					//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 				}
-				*/
+				
 				
 				//charsRead = send(establishedConnectionFD, encryptedMessage, sizeof(encryptedMessage), 0); // Send success back
 				//if (charsRead < 0) error("ERROR writing to socket");

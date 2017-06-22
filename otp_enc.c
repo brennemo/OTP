@@ -15,7 +15,7 @@
 #include <netdb.h> 
 #include <fcntl.h>
 
-#define BUFFER_SIZE 100000
+#define BUFFER_SIZE 150000
 #define CHUNK_SIZE 1000
 
 void error(const char *msg) { perror(msg); exit(0); } // Error function used for reporting issues
@@ -112,12 +112,13 @@ int main(int argc, char *argv[])
 	// Send message to server 
 	
 	sentLength = 0;
-	while (sentLength <= strlen(buffer)) {
+	/*while (sentLength <= strlen(buffer)) {
 		charsWritten = send(socketFD, buffer, strlen(buffer), 0); // Write to the server
 		sentLength += charsWritten;
-	}
-	/*
-	while(sentLength <= strlen(buffer)) {
+	}*/
+	//printf("Seg fault check after send!\n");
+	
+	while(sentLength < strlen(buffer)) {
 		//attempt to copy whole string
 		memset(chunk, '\0', CHUNK_SIZE);
 		strncpy(chunk, &buffer[sentLength], CHUNK_SIZE - 1);
@@ -126,10 +127,12 @@ int main(int argc, char *argv[])
 		charsWritten = send(socketFD, chunk, CHUNK_SIZE, 0); // Write to the server
 		if (charsWritten < 0) fprintf(stderr, "CLIENT: ERROR writing to socket");
 		
+		//printf("Seg fault check after send!\n");
+		
 		sentLength += (CHUNK_SIZE - 1); 
 		//if (charsWritten < strlen(buffer)) fprintf(stderr, "CLIENT: WARNING: Not all data written to socket!\n");
 	}
-	*/
+	
 
 	
 	/*
